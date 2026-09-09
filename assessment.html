@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise Transformation Assessment — Rockhouse Consulting</title>
+<meta name="description" content="Score your organization's readiness for AI-enabled decision systems across decision rights, data readiness, adoption readiness, and workforce capacity.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .assess-shell{
+    max-width: 720px; margin: 0 auto; background: var(--panel);
+    border: 1px solid var(--line-navy); border-radius: 2px; padding: clamp(24px,4vw,48px);
+  }
+  .progress-track{ height: 4px; background: var(--line); margin-bottom: 30px; position:relative; }
+  .progress-fill{ height:100%; background: var(--teal); width: 0%; transition: width .25s ease; }
+  .progress-label{ font-size:0.85rem; color: var(--ink-faint); margin-bottom: 8px; }
+  .q-dim{ font-family: var(--font-head); font-size:0.82rem; color: var(--teal-dark); font-weight:600; margin-bottom:10px; }
+  .q-options{ display:flex; flex-direction:column; gap:10px; margin-top:22px; }
+  .q-option{
+    text-align:left; padding: 14px 16px; border:1px solid var(--line-navy); background:#fff;
+    border-radius:2px; cursor:pointer; font-family: var(--font-body); font-size:0.98rem; color: var(--ink);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .q-option:hover{ border-color: var(--teal); }
+  .q-option.selected{ border-color: var(--teal); background: #EAF6F7; }
+  .q-nav{ display:flex; justify-content:space-between; margin-top:28px; }
+  .dim-score{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-top:1px solid var(--line-navy); }
+  .dim-score:last-child{ border-bottom:1px solid var(--line-navy); }
+  .dim-bar{ flex:1; height:6px; background: var(--line); margin:0 16px; position:relative; border-radius:2px; overflow:hidden; }
+  .dim-bar i{ display:block; height:100%; background: var(--teal); }
+  #screen-results{ display:none; }
+  #screen-intro .btn{ margin-top:10px; }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.png" alt="Rockhouse Consulting"></a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="assessment.html">Assessment</a></li>
+      <li><a href="insights.html">Insights</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <section style="padding-bottom:0;">
+    <div class="wrap">
+      <div class="eyebrow-line"><span class="num">Assessment</span></div>
+      <h1>Enterprise Transformation Assessment</h1>
+      <p class="lede max-prose">Twelve questions across the four domains of the real AERO Enterprise Transformation Assessment — Strategic Alignment, Technical Enablement, Decision Governance, and Operational Adoption. Takes about four minutes. You'll get a domain-by-domain readout at the end — no email required to see it.</p>
+      <p class="small max-prose">This isn't a pass/fail readiness score — it's a read on where your organization is positioned to start, and which domain is the real constraint. The domains and philosophy here are the real methodology; the specific question wording is still a draft for Patrick to refine.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="assess-shell">
+
+        <!-- INTRO -->
+        <div id="screen-intro">
+          <h3 class="mt-0">Before you start</h3>
+          <p>Answer for your organization as it operates today — not where you'd like it to be. There are no right answers; the point is an honest baseline.</p>
+          <button class="btn btn-primary" id="btn-start">Begin Assessment</button>
+        </div>
+
+        <!-- QUIZ -->
+        <div id="screen-quiz" class="hidden">
+          <div class="progress-label" id="progress-label">Question 1 of 12</div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="q-dim" id="q-dim"></div>
+          <h3 id="q-text" style="margin-bottom:0;"></h3>
+          <div class="q-options" id="q-options"></div>
+          <div class="q-nav">
+            <button class="btn btn-ghost" id="btn-back">Back</button>
+            <span class="small" id="q-hint">Select an answer to continue</span>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="screen-results">
+          <div class="q-dim">Your Result</div>
+          <h2 id="result-band" style="margin-bottom:6px;"></h2>
+          <p id="result-summary" class="max-prose"></p>
+
+          <div id="dim-scores" style="margin:26px 0;"></div>
+
+          <hr class="rule" style="margin-bottom:24px;">
+          <h3>Get the full readout</h3>
+          <p>Enter your email for a written summary of your gaps and a recommended starting phase — plus occasional insight from Rockhouse Consulting.</p>
+          <form id="lead-form" action="https://formspree.io/f/xzebyrza" method="POST">
+            <input type="hidden" name="assessment_band" id="hidden-band">
+            <input type="hidden" name="assessment_scores" id="hidden-scores">
+            <div class="form-row">
+              <div><label for="lead-name">Name</label><input type="text" id="lead-name" name="name" required></div>
+              <div><label for="lead-email">Work email</label><input type="email" id="lead-email" name="email" required></div>
+            </div>
+            <label for="lead-company">Company</label>
+            <input type="text" id="lead-company" name="company">
+            <button type="submit" class="btn btn-primary">Email Me My Results</button>
+          </form>
+          <p class="small" style="margin-top:18px;"><a href="assessment.html">Retake the assessment</a></p>
+          <div class="rule" style="margin:26px 0;"></div>
+          <p class="small">This is the enterprise-level Enterprise Transformation Assessment — it identifies where to start. Two deeper tools, the Decision Suitability Assessment (is this specific decision right for delegation) and the Governance Readiness Assessment (is governance strong enough to support it), come into play once a starting point is identified — typically as part of an engagement.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><img src="assets/logo.png" alt="Rockhouse Consulting"></div>
+        <p style="color:#93A3B5;max-width:34ch;">Industrial transformation and AI-enabled decision intelligence, out of Houston, TX.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Site</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="insights.html">Insights</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:8623600243">862-360-0243</a></li>
+            <li><a href="contact.html">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rockhouse Consulting. All rights reserved.</span>
+      <span>Houston, TX</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/assessment.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Rockhouse Consulting</title>
+<meta name="description" content="Get in touch with Rockhouse Consulting to discuss an engagement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.png" alt="Rockhouse Consulting"></a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="assessment.html">Assessment</a></li>
+      <li><a href="insights.html">Insights</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <section style="padding-bottom:0;">
+    <div class="wrap">
+      <div class="eyebrow-line"><span class="num">Contact</span></div>
+      <h1>Let's talk about the work.</h1>
+      <p class="lede max-prose">Whether it's a scoped diagnostic, a full engagement, or just a question about where to start — reach out directly.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap grid grid-2">
+      <div>
+        <form id="contact-form" action="https://formspree.io/f/xoeqydqp" method="POST">
+          <div class="form-row">
+            <div><label for="c-name">Name</label><input type="text" id="c-name" name="name" required></div>
+            <div><label for="c-email">Email</label><input type="email" id="c-email" name="email" required></div>
+          </div>
+          <div class="form-row">
+            <div><label for="c-company">Company</label><input type="text" id="c-company" name="company"></div>
+            <div><label for="c-phone">Phone (optional)</label><input type="tel" id="c-phone" name="phone"></div>
+          </div>
+          <label for="c-message">What are you looking to solve?</label>
+          <textarea id="c-message" name="message" required></textarea>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:20px;">
+          <h3>Direct</h3>
+          <p><a href="tel:8623600243">862-360-0243</a></p>
+          <p style="margin-bottom:0;">Houston, TX</p>
+        </div>
+        <div class="card">
+          <h3>Prefer to see the work first?</h3>
+          <p>Browse the full case-study portfolio before reaching out.</p>
+          <a href="https://pmunduga.github.io/business-transformation-portfolio/" target="_blank" rel="noopener" class="btn btn-outline">View the Portfolio</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><img src="assets/logo.png" alt="Rockhouse Consulting"></div>
+        <p style="color:#93A3B5;max-width:34ch;">Industrial transformation and AI-enabled decision intelligence, out of Houston, TX.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Site</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="insights.html">Insights</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:8623600243">862-360-0243</a></li>
+            <li><a href="contact.html">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rockhouse Consulting. All rights reserved.</span>
+      <span>Houston, TX</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
