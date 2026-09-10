@@ -1,3 +1,15 @@
+// ── EmailJS config — sign up free at emailjs.com, connect an email service
+// (Gmail is simplest), create a template with the variables listed below,
+// and replace these three placeholders with your real IDs.
+const EMAILJS_PUBLIC_KEY = "asGJezKaFBwII_xMA";
+const EMAILJS_SERVICE_ID = "service_yt0g33l";
+const EMAILJS_TEMPLATE_ID = "template_dvmq5hn";
+// Template variables this sends: to_name, to_email, band_headline,
+// narrative, domain_summary (multi-line), company.
+if (window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY);
+
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzebyrza";
+
 // Domains match the real AERO Enterprise Transformation Assessment:
 // Strategic Alignment, Technical Enablement, Decision Governance, Operational Adoption.
 const QUESTIONS = [
@@ -122,8 +134,10 @@ function showResults(){
 
   document.getElementById('result-band').textContent = stageHeadline;
   document.getElementById('result-summary').textContent = summary;
-  document.getElementById('hidden-band').value = `${stageHeadline} | weakest: ${weakest}`;
-  document.getElementById('hidden-scores').value = JSON.stringify(dimScores);
+
+  // Stash the computed result so the lead-capture form below can send it
+  // as the actual email content, not just notify Patrick that someone filled it out.
+  latestResult = { stageHeadline, weakest, summary, dimScores };
 
   const dimWrap = document.getElementById('dim-scores');
   dimWrap.innerHTML = '';
@@ -134,5 +148,64 @@ function showResults(){
     row.className = 'dim-score';
     row.innerHTML = `<span style="min-width:190px;">${d}${d === weakest ? ' <span class="small" style="color:var(--teal-dark);">— lowest</span>' : ''}</span><div class="dim-bar"><i style="width:${pct}%"></i></div><span class="small">${s.total}/${s.count * 4}</span>`;
     dimWrap.appendChild(row);
+  });
+}
+
+let latestResult = null;
+
+function buildDomainSummary(dimScores){
+  return DIMENSIONS.map(d => `${d}: ${dimScores[d].total}/${dimScores[d].count * 4}`).join('\n');
+}
+
+const leadForm = document.getElementById('lead-form');
+if (leadForm) {
+  leadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('lead-submit');
+    const status = document.getElementById('lead-status');
+    const name = document.getElementById('lead-name').value;
+    const email = document.getElementById('lead-email').value;
+    const company = document.getElementById('lead-company').value;
+
+    submitBtn.disabled = true;
+    status.textContent = 'Sending…';
+
+    const payload = {
+      name, email, company,
+      assessment_band: latestResult ? latestResult.stageHeadline : '',
+      assessment_weakest: latestResult ? latestResult.weakest : '',
+      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : ''
+    };
+
+    try {
+      // Notify Patrick via Formspree — fetch instead of a native form POST
+      // so the page doesn't navigate away to Formspree's own thank-you page.
+      const formspreePromise = fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      // Email the visitor their actual personalized report via EmailJS.
+      let emailjsPromise = Promise.resolve();
+      if (window.emailjs && latestResult) {
+        emailjsPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_name: name,
+          to_email: email,
+          company: company,
+          band_headline: latestResult.stageHeadline,
+          narrative: latestResult.summary,
+          domain_summary: buildDomainSummary(latestResult.dimScores)
+        });
+      }
+
+      await Promise.all([formspreePromise, emailjsPromise]);
+
+      leadForm.classList.add('hidden');
+      document.getElementById('lead-confirmation').classList.remove('hidden');
+    } catch (err) {
+      status.textContent = "Something went wrong sending that — try again, or reach out directly via the Contact page.";
+      submitBtn.disabled = false;
+    }
   });
 }

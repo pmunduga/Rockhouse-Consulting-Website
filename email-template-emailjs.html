@@ -1,0 +1,100 @@
+<!-- ============================================================
+     Paste this into EmailJS: Email Templates → your template → Code Editor
+     Variables used ({{...}}) are already sent by js/assessment.js — don't rename them
+     unless you also update the emailjs.send() call in that file.
+     Set the template's "To Email" field to {{to_email}} in the EmailJS settings panel
+     (not in this HTML) so it actually reaches the visitor.
+     ============================================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Enterprise Transformation Assessment results</title>
+</head>
+<body style="margin:0; padding:0; background-color:#EEEBE3;">
+
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    Your Enterprise Transformation Assessment results from Rockhouse Consulting.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#EEEBE3; padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#F7F5F1; border:1px solid #D9D3C6; max-width:600px; width:100%;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding:28px 40px 20px; border-bottom:2px solid #0E8394;">
+              <img src="https://rockhouse-consulting.com/assets/logo.png" width="150" alt="Rockhouse Consulting" style="display:block;">
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 40px 8px;">
+              <p style="margin:0 0 20px; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:15px; line-height:1.6; color:#191F26;">
+                Hi {{to_name}},
+              </p>
+              <p style="margin:0 0 28px; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:15px; line-height:1.6; color:#4C555E;">
+                Here's your Enterprise Transformation Assessment readout — the same one you saw on screen, now in writing.
+              </p>
+
+              <p style="margin:0 0 6px; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:12px; letter-spacing:0.02em; color:#0A6472; text-transform:uppercase; font-weight:600;">
+                Your Result
+              </p>
+              <h1 style="margin:0 0 16px; font-family:'Space Grotesk',Arial,sans-serif; font-size:26px; line-height:1.2; color:#002554; font-weight:600;">
+                {{band_headline}}
+              </h1>
+              <p style="margin:0 0 30px; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:15px; line-height:1.65; color:#4C555E;">
+                {{narrative}}
+              </p>
+
+              <!-- Domain scores — plain text block; EmailJS text vars can't easily drive
+                   dynamic-width bars per row, so this renders as readable text lines rather
+                   than the visual bars shown in the on-screen version. See note below. -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #D9D3C6; padding-top:16px;">
+                <tr>
+                  <td style="padding-top:16px; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:14px; line-height:1.9; color:#191F26; white-space:pre-line;">
+                    {{domain_summary}}
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td style="padding:8px 40px 36px;">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#0E8394; border-radius:2px;">
+                    <a href="https://rockhouse-consulting.com/contact.html" style="display:inline-block; padding:13px 26px; font-family:'Space Grotesk',Arial,sans-serif; font-size:14px; font-weight:600; color:#ffffff; text-decoration:none;">
+                      Talk Through Your Results
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 40px 32px; border-top:1px solid #D9D3C6;">
+              <p style="margin:0 0 6px; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:12px; color:#79808A;">
+                Rockhouse Consulting &nbsp;·&nbsp; Houston, TX &nbsp;·&nbsp; 862-360-0243
+              </p>
+              <p style="margin:0; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:12px; color:#79808A;">
+                You're receiving this because you completed the Enterprise Transformation Assessment at rockhouse-consulting.com.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
