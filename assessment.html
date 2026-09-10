@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   .assess-shell{
     max-width: 720px; margin: 0 auto; background: var(--panel);
@@ -96,19 +97,22 @@
           <div id="dim-scores" style="margin:26px 0;"></div>
 
           <hr class="rule" style="margin-bottom:24px;">
-          <h3>Get the full readout</h3>
-          <p>Enter your email for a written summary of your gaps and a recommended starting phase — plus occasional insight from Rockhouse Consulting.</p>
-          <form id="lead-form" action="https://formspree.io/f/xzebyrza" method="POST">
-            <input type="hidden" name="assessment_band" id="hidden-band">
-            <input type="hidden" name="assessment_scores" id="hidden-scores">
+          <h3>Get the full readout by email</h3>
+          <p>Enter your email and we'll send your written domain breakdown and starting-point recommendation directly to your inbox — plus occasional insight from Rockhouse Consulting.</p>
+          <form id="lead-form">
             <div class="form-row">
               <div><label for="lead-name">Name</label><input type="text" id="lead-name" name="name" required></div>
               <div><label for="lead-email">Work email</label><input type="email" id="lead-email" name="email" required></div>
             </div>
             <label for="lead-company">Company</label>
             <input type="text" id="lead-company" name="company">
-            <button type="submit" class="btn btn-primary">Email Me My Results</button>
+            <button type="submit" class="btn btn-primary" id="lead-submit">Email Me My Results</button>
+            <p class="small" id="lead-status" style="margin-top:10px;"></p>
           </form>
+          <div id="lead-confirmation" class="hidden">
+            <p class="ink" style="font-weight:600;">Sent — check your inbox.</p>
+            <p class="small">If you don't see it in a few minutes, check spam.</p>
+          </div>
           <p class="small" style="margin-top:18px;"><a href="assessment.html">Retake the assessment</a></p>
           <div class="rule" style="margin:26px 0;"></div>
           <p class="small">This is the enterprise-level Enterprise Transformation Assessment — it identifies where to start. Two deeper tools, the Decision Suitability Assessment (is this specific decision right for delegation) and the Governance Readiness Assessment (is governance strong enough to support it), come into play once a starting point is identified — typically as part of an engagement.</p>
