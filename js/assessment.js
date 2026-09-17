@@ -44,6 +44,24 @@ const QUESTIONS = [
 
 const DIMENSIONS = ["Strategic Alignment", "Technical Enablement", "Decision Governance", "Operational Adoption"];
 
+// One follow-up conversation prompt per question, indexed to match QUESTIONS.
+// Only surfaced in Patrick's notification when that question scores low (1-2) —
+// a ready-to-ask opener for the actual gap, not a summary of the answer itself.
+const FOLLOW_UP_PROMPTS = [
+  "If we started today, what's the one business outcome you'd want a first governed experiment to move — and who in the room could sign off on that being the goal?",
+  "Who beyond the budget approver is going to show up when this hits its first rough patch?",
+  "What's a mistake you'd tolerate here, and what's one you wouldn't — even roughly?",
+  "Which single data source, if it went down for a day, would actually stop this decision from being made well?",
+  "Walk me through the last time you needed a straight answer to an operational question — how long did it actually take, and who did you have to go through?",
+  "Where does data currently get stuck or re-typed by hand between the systems that matter here?",
+  "If two people disagreed on this decision tomorrow, whose call is it — and is that written down anywhere?",
+  "If something like this went wrong at 5pm on a Friday, who finds out, and how fast?",
+  "When a delegated decision goes wrong today, what actually happens next — is there a name attached, or does it just get discussed?",
+  "What's the last new system or process that didn't stick here — and why do you think it didn't?",
+  "Who's actually got time carved out for this, versus squeezing it in around their day job?",
+  "Of the last few process changes you've made, how many are still being followed exactly as designed a year later?"
+];
+
 const DIM_NARRATIVE = {
   "Strategic Alignment": "without a clear, shared statement of what a first experiment should achieve, even a technically strong pilot tends to drift or stall for lack of a decision-maker who owns it",
   "Technical Enablement": "the data and systems a decision would draw on aren't yet trustworthy enough to hand any part of that decision to an agent",
@@ -157,6 +175,49 @@ function buildDomainSummary(dimScores){
   return DIMENSIONS.map(d => `${d}: ${dimScores[d].total}/${dimScores[d].count * 4}`).join('\n');
 }
 
+// Full question-by-question detail for Patrick's notification — not shown
+// to the visitor, just included in the Formspree payload.
+function buildFullAnswerDetail(){
+  return QUESTIONS.map((q, i) => {
+    const chosen = answers[i] ? q.options[answers[i] - 1] : '(no answer)';
+    return `Q${i + 1} [${q.dim}] ${q.text}\n   → ${chosen}`;
+  }).join('\n\n');
+}
+
+// Scannable prep notes: only the low-scoring answers (1-2 of 4), each paired
+// with a ready-to-ask follow-up — this is what's actually worth reading
+// before a call, versus the full 12-answer list below it (kept as backup).
+function buildPrepNotes(){
+  const flagged = [];
+  QUESTIONS.forEach((q, i) => {
+    const score = answers[i];
+    if (score && score <= 2) {
+      flagged.push(`[${q.dim}] ${q.text}\n   Their answer: ${q.options[score - 1]}\n   Ask: ${FOLLOW_UP_PROMPTS[i]}`);
+    }
+  });
+  if (flagged.length === 0) {
+    return "No flagged gaps — every answer scored 3 or higher. Worth probing ambition and scale rather than basic readiness.";
+  }
+  return flagged.join('\n\n');
+}
+
+// Save a lightweight record of this completed assessment so that if the same
+// visitor later submits the Contact form in this browser, we can attach it —
+// linking the two submissions without needing a manual cross-reference.
+const PRIOR_ASSESSMENT_KEY = 'rockhouse_prior_assessment';
+function saveAssessmentForLinking(name, email, company){
+  if (!latestResult) return;
+  try {
+    localStorage.setItem(PRIOR_ASSESSMENT_KEY, JSON.stringify({
+      name, email, company,
+      band: latestResult.stageHeadline,
+      weakest: latestResult.weakest,
+      domain_summary: buildDomainSummary(latestResult.dimScores),
+      timestamp: new Date().toISOString()
+    }));
+  } catch (e) { /* localStorage unavailable — non-critical, skip silently */ }
+}
+
 const leadForm = document.getElementById('lead-form');
 if (leadForm) {
   leadForm.addEventListener('submit', async (e) => {
@@ -174,7 +235,9 @@ if (leadForm) {
       name, email, company,
       assessment_band: latestResult ? latestResult.stageHeadline : '',
       assessment_weakest: latestResult ? latestResult.weakest : '',
-      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : ''
+      assessment_prep_notes: buildPrepNotes(),
+      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : '',
+      assessment_full_detail: buildFullAnswerDetail()
     };
 
     try {
@@ -200,6 +263,8 @@ if (leadForm) {
       }
 
       await Promise.all([formspreePromise, emailjsPromise]);
+
+      saveAssessmentForLinking(name, email, company);
 
       leadForm.classList.add('hidden');
       document.getElementById('lead-confirmation').classList.remove('hidden');
