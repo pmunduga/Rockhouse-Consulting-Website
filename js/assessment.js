@@ -2,7 +2,7 @@
 // (Gmail is simplest), create a template with the variables listed below,
 // and replace these three placeholders with your real IDs.
 const EMAILJS_PUBLIC_KEY = "asGJezKaFBwII_xMA";
-const EMAILJS_SERVICE_ID = "service_bvr5zfh";
+const EMAILJS_SERVICE_ID = "service_2bq1tup";
 const EMAILJS_TEMPLATE_ID = "template_dvmq5hn";
 // Template variables this sends: to_name, to_email, band_headline,
 // narrative, domain_summary (multi-line), company.
