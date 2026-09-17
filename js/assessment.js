@@ -175,15 +175,90 @@ function buildDomainSummary(dimScores){
   return DIMENSIONS.map(d => `${d}: ${dimScores[d].total}/${dimScores[d].count * 4}`).join('\n');
 }
 
-// Prep notes: every one of the 12 answers, each with its follow-up "Ask" —
-// low-scoring ones (1-2 of 4) are marked with ⚠ LOW so they still stand out
-// while scanning the full list.
-function buildPrepNotes(){
+// ── Call-structured prep notes, aimed at closing a pilot, not auditing all 12
+// answers live. Four sections: what to propose, what to open with, the 1-2
+// questions actually worth asking, and how to bridge to the close.
+
+const PILOT_ANGLE = {
+  "Strategic Alignment": "Without a written Strategic Intent or clear executive ownership, the strongest pilot angle is a short, scoped diagnostic that produces that Strategic Intent statement itself — cheap, fast, and it directly unblocks everything downstream. Propose starting there rather than a technical pilot.",
+  "Technical Enablement": "With trusted, integrated data not yet in place, the strongest pilot angle is narrow: pick the single decision most starved for reliable data, and scope the pilot around proving that one data source can be trusted end-to-end — not a broader platform buildout.",
+  "Decision Governance": "With decision rights and escalation still informal, the strongest pilot angle is governing one recurring, well-bounded decision end-to-end — documenting who decides what and building the escalation path around it — rather than something broader or more technically ambitious.",
+  "Operational Adoption": "With change capacity and adoption still fragile, the strongest pilot angle is small and visible: a scoped pilot with a dedicated owner and a built-in reinforcement cadence, chosen specifically to prove change can stick here — proof of adoption, not just proof of concept."
+};
+
+const STRENGTH_FRAME = {
+  "Strategic Alignment": "Open by acknowledging their strategic clarity — most organizations at this stage have far less executive alignment than this.",
+  "Technical Enablement": "Open by acknowledging their data and systems foundation — it's stronger than most organizations at this stage, which removes a common blocker early.",
+  "Decision Governance": "Open by acknowledging their governance discipline — it's already more mature than typical at this stage.",
+  "Operational Adoption": "Open by acknowledging their adoption track record — change tends to stick here, which de-risks anything proposed."
+};
+
+const CLOSING_LINE = {
+  "Strategic Alignment": "So — rather than start broad, the clearest next step is a short pilot to nail down a real Strategic Intent statement together. Want to scope that out?",
+  "Technical Enablement": "So — rather than a big platform push, the clearest next step is a narrow pilot proving one data source can be trusted end-to-end. Want to scope that out?",
+  "Decision Governance": "So — rather than rebuilding governance wholesale, the clearest next step is piloting one well-bounded decision end-to-end, with clear rights and escalation. Want to scope that out?",
+  "Operational Adoption": "So — rather than a big rollout, the clearest next step is a small, visible pilot with a dedicated owner, built specifically to prove it sticks here. Want to scope that out?"
+};
+
+function domainPct(dimScores, dim){
+  const s = dimScores[dim];
+  return s.total / (s.count * 4);
+}
+
+function rankDomainsAscending(dimScores){
+  return [...DIMENSIONS].sort((a, b) => domainPct(dimScores, a) - domainPct(dimScores, b));
+}
+
+function questionIndexesForDomain(dim){
+  return QUESTIONS.map((q, i) => i).filter(i => QUESTIONS[i].dim === dim);
+}
+
+function lowestScoringQuestionInDomain(dim){
+  const idxs = questionIndexesForDomain(dim);
+  return idxs.reduce((best, i) => (answers[i] || 99) < (answers[best] || 99) ? i : best, idxs[0]);
+}
+
+function highestScoringQuestionInDomain(dim){
+  const idxs = questionIndexesForDomain(dim);
+  return idxs.reduce((best, i) => (answers[i] || 0) > (answers[best] || 0) ? i : best, idxs[0]);
+}
+
+function buildRecommendedPilotAngle(dimScores, weakest){
+  const qi = lowestScoringQuestionInDomain(weakest);
+  const q = QUESTIONS[qi];
+  const chosen = answers[qi] ? q.options[answers[qi] - 1] : '(no answer)';
+  return `${PILOT_ANGLE[weakest]}\n\nMost concrete entry point: their answer to "${q.text}" — "${chosen}" — is the clearest place to start.`;
+}
+
+function buildOpeningStrength(dimScores){
+  const strongest = rankDomainsAscending(dimScores).slice(-1)[0];
+  const qi = highestScoringQuestionInDomain(strongest);
+  const q = QUESTIONS[qi];
+  const chosen = answers[qi] ? q.options[answers[qi] - 1] : '(no answer)';
+  return `${STRENGTH_FRAME[strongest]}\n\nConcrete example: "${chosen}" (re: ${q.text})`;
+}
+
+function buildCallReadyAsks(dimScores, weakest){
+  const secondWeakest = rankDomainsAscending(dimScores)[1];
+  const asks = [];
+  const qi1 = lowestScoringQuestionInDomain(weakest);
+  asks.push(`1. [${weakest}] ${FOLLOW_UP_PROMPTS[qi1]}`);
+  const idxs2 = questionIndexesForDomain(secondWeakest);
+  const flaggedIn2 = idxs2.find(i => answers[i] && answers[i] <= 2);
+  if (flaggedIn2 !== undefined) {
+    asks.push(`2. [${secondWeakest}] ${FOLLOW_UP_PROMPTS[flaggedIn2]}`);
+  }
+  return asks.join('\n\n');
+}
+
+// Appendix: the complete 12-question record — reference material, not call
+// material. Low-scoring answers still marked for quick scanning if needed.
+function buildFullAnswerDetail(){
   return QUESTIONS.map((q, i) => {
     const score = answers[i];
     const chosen = score ? q.options[score - 1] : '(no answer)';
     const flag = (score && score <= 2) ? '⚠ LOW — ' : '';
-    return `${flag}[${q.dim}] ${q.text}\n   Their answer: ${chosen}\n   Ask: ${FOLLOW_UP_PROMPTS[i]}`;
+    return `${flag}[${q.dim}] ${q.text}\n   → ${chosen}`;
   }).join('\n\n');
 }
 
@@ -228,9 +303,13 @@ if (leadForm) {
       name, email, company,
       assessment_band: latestResult ? latestResult.stageHeadline : '',
       assessment_weakest: latestResult ? latestResult.weakest : '',
+      recommended_pilot_angle: latestResult ? buildRecommendedPilotAngle(latestResult.dimScores, latestResult.weakest) : '',
+      opening_strength: latestResult ? buildOpeningStrength(latestResult.dimScores) : '',
+      call_ready_asks: latestResult ? buildCallReadyAsks(latestResult.dimScores, latestResult.weakest) : '',
+      closing_line: latestResult ? CLOSING_LINE[latestResult.weakest] : '',
       client_report_copy: buildClientReportCopy(),
-      assessment_prep_notes: buildPrepNotes(),
-      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : ''
+      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : '',
+      appendix_full_qa: buildFullAnswerDetail()
     };
 
     try {
