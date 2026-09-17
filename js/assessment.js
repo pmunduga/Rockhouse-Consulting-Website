@@ -175,22 +175,23 @@ function buildDomainSummary(dimScores){
   return DIMENSIONS.map(d => `${d}: ${dimScores[d].total}/${dimScores[d].count * 4}`).join('\n');
 }
 
-// Scannable prep notes: only the low-scoring answers (1-2 of 4), each paired
-// with a ready-to-ask follow-up — this is what's actually worth reading
-// before a call. No separate full 12-answer dump; well-scoring answers
-// (3-4) aren't flagged here since they're not what needs discussing.
+// Prep notes: every one of the 12 answers, each with its follow-up "Ask" —
+// low-scoring ones (1-2 of 4) are marked with ⚠ LOW so they still stand out
+// while scanning the full list.
 function buildPrepNotes(){
-  const flagged = [];
-  QUESTIONS.forEach((q, i) => {
+  return QUESTIONS.map((q, i) => {
     const score = answers[i];
-    if (score && score <= 2) {
-      flagged.push(`[${q.dim}] ${q.text}\n   Their answer: ${q.options[score - 1]}\n   Ask: ${FOLLOW_UP_PROMPTS[i]}`);
-    }
-  });
-  if (flagged.length === 0) {
-    return "No flagged gaps — every answer scored 3 or higher. Worth probing ambition and scale rather than basic readiness.";
-  }
-  return flagged.join('\n\n');
+    const chosen = score ? q.options[score - 1] : '(no answer)';
+    const flag = (score && score <= 2) ? '⚠ LOW — ' : '';
+    return `${flag}[${q.dim}] ${q.text}\n   Their answer: ${chosen}\n   Ask: ${FOLLOW_UP_PROMPTS[i]}`;
+  }).join('\n\n');
+}
+
+// A copy of exactly what the client's EmailJS report contained — so Patrick
+// doesn't need to check the client's inbox to see what they were sent.
+function buildClientReportCopy(){
+  if (!latestResult) return '';
+  return `Result: ${latestResult.stageHeadline}\n\nNarrative sent to client:\n${latestResult.summary}\n\nDomain scores:\n${buildDomainSummary(latestResult.dimScores)}`;
 }
 
 // Save a lightweight record of this completed assessment so that if the same
@@ -227,6 +228,7 @@ if (leadForm) {
       name, email, company,
       assessment_band: latestResult ? latestResult.stageHeadline : '',
       assessment_weakest: latestResult ? latestResult.weakest : '',
+      client_report_copy: buildClientReportCopy(),
       assessment_prep_notes: buildPrepNotes(),
       assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : ''
     };
