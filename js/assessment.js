@@ -49,13 +49,13 @@ const DIMENSIONS = ["Strategic Alignment", "Technical Enablement", "Decision Gov
 // a ready-to-ask opener for the actual gap, not a summary of the answer itself.
 const FOLLOW_UP_PROMPTS = [
   "If we started today, what's the one business outcome you'd want a first governed experiment to move — and who in the room could sign off on that being the goal?",
-  "Who beyond the budget approver is going to show up when this hits its first rough patch?",
+  "Who beyond the budget approver would actually show up if a first pilot ran into a real setback?",
   "What's a mistake you'd tolerate here, and what's one you wouldn't — even roughly?",
-  "Which single data source, if it went down for a day, would actually stop this decision from being made well?",
+  "Think of the last operational decision that turned out to be wrong — was bad or missing data part of why?",
   "Walk me through the last time you needed a straight answer to an operational question — how long did it actually take, and who did you have to go through?",
   "Where does data currently get stuck or re-typed by hand between the systems that matter here?",
-  "If two people disagreed on this decision tomorrow, whose call is it — and is that written down anywhere?",
-  "If something like this went wrong at 5pm on a Friday, who finds out, and how fast?",
+  "Think of a recent decision that took longer than it should have because people disagreed — who ended up making the call, and was that clear from the start?",
+  "If a new initiative went wrong at 5pm on a Friday, who'd find out, and how fast?",
   "When a delegated decision goes wrong today, what actually happens next — is there a name attached, or does it just get discussed?",
   "What's the last new system or process that didn't stick here — and why do you think it didn't?",
   "Who's actually got time carved out for this, versus squeezing it in around their day job?",
@@ -175,18 +175,10 @@ function buildDomainSummary(dimScores){
   return DIMENSIONS.map(d => `${d}: ${dimScores[d].total}/${dimScores[d].count * 4}`).join('\n');
 }
 
-// Full question-by-question detail for Patrick's notification — not shown
-// to the visitor, just included in the Formspree payload.
-function buildFullAnswerDetail(){
-  return QUESTIONS.map((q, i) => {
-    const chosen = answers[i] ? q.options[answers[i] - 1] : '(no answer)';
-    return `Q${i + 1} [${q.dim}] ${q.text}\n   → ${chosen}`;
-  }).join('\n\n');
-}
-
 // Scannable prep notes: only the low-scoring answers (1-2 of 4), each paired
 // with a ready-to-ask follow-up — this is what's actually worth reading
-// before a call, versus the full 12-answer list below it (kept as backup).
+// before a call. No separate full 12-answer dump; well-scoring answers
+// (3-4) aren't flagged here since they're not what needs discussing.
 function buildPrepNotes(){
   const flagged = [];
   QUESTIONS.forEach((q, i) => {
@@ -236,8 +228,7 @@ if (leadForm) {
       assessment_band: latestResult ? latestResult.stageHeadline : '',
       assessment_weakest: latestResult ? latestResult.weakest : '',
       assessment_prep_notes: buildPrepNotes(),
-      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : '',
-      assessment_full_detail: buildFullAnswerDetail()
+      assessment_scores: latestResult ? JSON.stringify(latestResult.dimScores) : ''
     };
 
     try {
