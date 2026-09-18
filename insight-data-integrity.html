@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Looked Fine. The Data Was 84% Wrong. — Rockhouse Consulting</title>
+<meta name="description" content="Sales were beating target by 14%. The dashboard said everything was fine. It wasn't — and the reason why is a data governance story, not just an analytics one.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .article-body{ max-width: 68ch; }
+  .article-body h2{ margin-top: 2.2em; font-size: 1.4rem; }
+  .article-body p{ max-width: none; color: var(--ink); }
+  .pull-quote{
+    border-left: 3px solid var(--teal); margin: 2em 0; padding: 4px 0 4px 22px;
+    font-family: var(--font-head); font-size: 1.15rem; color: var(--navy); font-weight: 500; line-height: 1.4;
+  }
+  .article-meta{ display:flex; gap:14px; align-items:center; color: var(--ink-faint); font-size:0.9rem; margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.png" alt="Rockhouse Consulting"></a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="assessment.html">Assessment</a></li>
+      <li><a href="insights.html">Insights</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <section style="padding-bottom:0;">
+    <div class="wrap article-body">
+      <p class="small"><a href="insights.html">← Back to Insights</a></p>
+      <div class="article-meta"><span>Enterprise Analytics &amp; BI · Applied Case Study</span></div>
+      <h1>Dashboard looked fine. The data was 84% wrong.</h1>
+      <p class="lede">In this applied analytics case, the dashboard said everything was fine. Sales were beating target by 14%. By every number on the screen, the quarter looked like a win.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap article-body">
+
+      <h2>The assumption</h2>
+      <p>The numbers on the dashboard were treated as ground truth — the way dashboard numbers usually are. Nobody was auditing the customer feedback data feeding into it, because the top-line sales figure looked healthy, and a healthy top-line number rarely triggers anyone to go looking for a problem underneath it.</p>
+
+      <h2>What was actually happening</h2>
+      <p>A closer look at the underlying customer feedback data found a data pipeline issue that had been silently corrupting records for some time — 84% of the customer feedback data feeding the dashboard was compromised. Once the real data was reconstructed, the picture inverted: 61% of customers were actually dissatisfied, invisible the entire time behind a sales number that had nothing to do with customer sentiment.</p>
+
+      <p class="pull-quote">The most dangerous data problems aren't the ones that produce an obviously wrong number. They're the ones that produce a number that looks exactly right.</p>
+
+      <h2>Why this matters more than the number itself</h2>
+      <p>This is a data governance story as much as an analytics one. A healthy top-line metric had been quietly masking a customer experience problem serious enough to eventually threaten the very sales number everyone was celebrating. Marketing spend, retention strategy, and product decisions were all one budget cycle away from being built on top of a number that wasn't real.</p>
+
+      <h2>What the finding changed</h2>
+      <p>Catching the integrity problem before it propagated meant those downstream decisions never got made on corrupted ground. The value here wasn't a new dashboard — it was catching a trust problem in the data before it could distort every decision built on top of it.</p>
+
+      <p>Most organizations invest in dashboards. Far fewer invest in verifying that what feeds the dashboard is actually true. The gap between those two is exactly where this kind of finding lives.</p>
+
+    </div>
+  </section>
+
+  <section class="section-navy">
+    <div class="wrap center">
+      <h2 class="mt-0">Where does your own organization actually stand?</h2>
+      <p style="max-width:50ch;margin-left:auto;margin-right:auto;">The Enterprise Transformation Assessment scores you across the domains that determine where a first governed experiment should responsibly start.</p>
+      <a href="assessment.html" class="btn btn-primary">Take the Assessment</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><img src="assets/logo.png" alt="Rockhouse Consulting"></div>
+        <p style="color:#93A3B5;max-width:34ch;">Industrial transformation and AI-enabled decision intelligence, out of Houston, TX.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Site</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="insights.html">Insights</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:8306007997">830-600-7997</a></li>
+            <li><a href="contact.html">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rockhouse Consulting. All rights reserved.</span>
+      <span>Houston, TX</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
