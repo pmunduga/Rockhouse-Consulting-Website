@@ -8,6 +8,11 @@ const EMAILJS_TEMPLATE_ID = "template_dvmq5hn";
 // narrative, domain_summary (multi-line), company.
 if (window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY);
 
+// Internal Lead Meeting Sheet — sent to Patrick, not the client. Separate
+// template (lead-meeting-sheet-emailjs.html) with its own Template ID.
+const EMAILJS_TEMPLATE_ID_INTERNAL = "template_ufb6eth";
+const PATRICK_EMAIL = "info@rockhouse-consulting.com";
+
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzebyrza";
 
 // Domains match the real AERO Enterprise Transformation Assessment:
@@ -334,7 +339,31 @@ if (leadForm) {
         });
       }
 
-      await Promise.all([formspreePromise, emailjsPromise]);
+      // Send Patrick the designed Lead Meeting Sheet — separate template,
+      // always to PATRICK_EMAIL regardless of what the visitor typed.
+      // Wrapped in its own catch so a failure here (e.g. template not yet
+      // configured) never blocks the visitor's own confirmation.
+      let leadSheetPromise = Promise.resolve();
+      if (window.emailjs && latestResult) {
+        leadSheetPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID_INTERNAL, {
+          to_email: PATRICK_EMAIL,
+          lead_name: name,
+          lead_email: email,
+          lead_company: company || '(none given)',
+          assessment_band: latestResult.stageHeadline,
+          assessment_weakest: latestResult.weakest,
+          pilot_angle: buildRecommendedPilotAngle(latestResult.dimScores, latestResult.weakest),
+          opening_strength: buildOpeningStrength(latestResult.dimScores),
+          call_ready_asks: buildCallReadyAsks(latestResult.dimScores, latestResult.weakest),
+          closing_line: CLOSING_LINE[latestResult.weakest],
+          domain_summary: buildDomainSummary(latestResult.dimScores),
+          appendix_qa: buildFullAnswerDetail()
+        }).catch(err => {
+          console.error('Lead Meeting Sheet send failed (non-blocking):', err);
+        });
+      }
+
+      await Promise.all([formspreePromise, emailjsPromise, leadSheetPromise]);
 
       saveAssessmentForLinking(name, email, company);
 
