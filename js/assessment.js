@@ -82,6 +82,7 @@ const screenQuiz = document.getElementById('screen-quiz');
 const screenResults = document.getElementById('screen-results');
 
 document.getElementById('btn-start').addEventListener('click', () => {
+  if (window.gtag) gtag('event', 'assessment_start');
   screenIntro.classList.add('hidden');
   screenQuiz.classList.remove('hidden');
   renderQuestion();
@@ -161,6 +162,7 @@ function showResults(){
   // Stash the computed result so the lead-capture form below can send it
   // as the actual email content, not just notify Patrick that someone filled it out.
   latestResult = { stageHeadline, weakest, summary, dimScores };
+  if (window.gtag) gtag('event', 'assessment_complete', { weakest_domain: weakest, stage: stage });
 
   const dimWrap = document.getElementById('dim-scores');
   dimWrap.innerHTML = '';
@@ -366,6 +368,7 @@ if (leadForm) {
       await Promise.all([formspreePromise, emailjsPromise, leadSheetPromise]);
 
       saveAssessmentForLinking(name, email, company);
+      if (window.gtag) gtag('event', 'generate_lead', { source: 'assessment' });
 
       leadForm.classList.add('hidden');
       document.getElementById('lead-confirmation').classList.remove('hidden');

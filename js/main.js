@@ -18,4 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const href = a.getAttribute('href');
     if (href === path) a.classList.add('active');
   });
+
+  // Analytics: contact form submission (beacon so it survives the page navigation)
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm && window.gtag) {
+    contactForm.addEventListener('submit', () => {
+      gtag('event', 'generate_lead', { source: 'contact', transport_type: 'beacon' });
+    });
+  }
 });
