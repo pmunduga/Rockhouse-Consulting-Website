@@ -2,8 +2,13 @@
   // EmailJS: same account/service as the assessment. Create a NEW template for this
   // report (see email-template-business-check.html) and paste its ID below.
   var EJS_PUBLIC_KEY='asGJezKaFBwII_xMA', EJS_SERVICE='service_2bq1tup', EJS_TEMPLATE='template_ojcsj1n';
-  // Replace with your Microsoft Bookings / Calendly link when you have one.
-  var BOOKING_URL='https://rockhouse-consulting.com/contact.html?utm_source=business-check-email&utm_medium=email';
+  // Your Calendly link (the 20-minute event type). Paste it between the quotes.
+  var CALENDLY_URL='https://calendly.com/patrick-munduga/free-business-check';
+  function bookingUrl(name,email,src){
+    if(CALENDLY_URL.indexOf('REPLACE')>-1)return 'https://rockhouse-consulting.com/contact.html';
+    var u=CALENDLY_URL+(CALENDLY_URL.indexOf('?')>-1?'&':'?')+'name='+encodeURIComponent(name||'')+'&email='+encodeURIComponent(email||'')+'&utm_source='+src;
+    return u;
+  }
   if(window.emailjs)emailjs.init(EJS_PUBLIC_KEY);
 
   var QS=[
@@ -58,7 +63,7 @@
       narrative:'Your overall score was '+last.score+'. '+TIPS[last.key],
       domain_summary:lines.join('\n'),
       answer_detail:det.join('\n\n'),
-      booking_url:BOOKING_URL
+      booking_url:bookingUrl(f.name.value,f.email.value,'business-check-email')
     }).catch(function(e){console.error('Report email failed (non-blocking):',e);});
   }
   $('bc-start').onclick=function(){g('bc_start');i=0;ans=[];show('bc-quiz');render();};
@@ -77,7 +82,7 @@
     d.append('message',L.join('\n'));
     d.append('_subject','Business Check lead: '+(f.company.value||f.name.value)+' ('+last.score+', weakest: '+last.weakest+')');
     fetch('https://formspree.io/f/xoeqydqp',{method:'POST',body:d,headers:{Accept:'application/json'}}).then(function(r){
-      if(r.ok){sendReport(f);g('generate_lead',{source:'business-check'});st.textContent='Thanks. I will be in touch within a business day.';f.reset();}
+      if(r.ok){sendReport(f);g('generate_lead',{source:'business-check'});st.textContent='Thanks. Your results are on their way to your inbox.';var bk=$('bc-book');bk.href=bookingUrl(f.name.value,f.email.value,'business-check-page');bk.style.display='inline-block';bk.onclick=function(){g('book_click',{source:'business-check'});};f.reset();}
       else st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';
     }).catch(function(){st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';});
   });
