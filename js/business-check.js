@@ -31,7 +31,7 @@
     var weakest=Object.keys(t).sort(function(a,b){return t[a]-t[b]})[0];
     var total=Object.keys(t).reduce(function(s,k){return s+t[k]},0);
     var level=total<=5?'Lots of easy wins':total<=11?'A solid base with clear gaps':'Strong foundation';
-    last={weakest:NAMES[weakest],score:total+'/16',level:level};
+    last={weakest:NAMES[weakest],score:total+'/16',level:level,t:t,total:total};
     $('bc-headline').textContent=level+'. Start with: '+NAMES[weakest]+'.';
     var s='';Object.keys(t).forEach(function(k){var p=t[k]/4*100;
       s+='<div style="margin:.6rem 0"><div style="display:flex;justify-content:space-between"><span>'+NAMES[k]+'</span><span>'+t[k]+'/4</span></div><div style="background:#e3e8ee;height:10px;border-radius:5px"><div style="width:'+p+'%;height:10px;border-radius:5px;background:#0E8394"></div></div></div>';});
@@ -43,8 +43,17 @@
   $('bc-back').onclick=function(){if(i>0){i--;render();}};
   $('bc-form').addEventListener('submit',function(e){
     e.preventDefault();var f=e.target,st=$('bc-status');st.textContent='Sending...';
-    var d=new FormData(f);d.append('source','business-check');d.append('message','Business Check result: '+last.level+' ('+last.score+'). Weakest area: '+last.weakest+'. Answers: '+ans.join(','));
-    d.append('_subject','Business Check lead');
+    var d=new FormData(f);d.append('source','business-check');
+    var LAB=['Weak','Developing','Strong'],L=[];
+    L.push('BUSINESS CHECK SUMMARY','Overall: '+last.score+' ('+last.level+')','Weakest area: '+last.weakest,'','AREA SCORES (each out of 4)');
+    Object.keys(NAMES).forEach(function(k){L.push('- '+NAMES[k]+': '+last.t[k]+'/4');});
+    L.push('','ANSWERS');
+    QS.forEach(function(q,k){L.push((k+1)+'. ['+NAMES[q.d]+'] '+q.q+' -> '+q.o[ans[k]]+' ('+LAB[ans[k]]+')');});
+    L.push('','TALKING POINTS FOR FOLLOW-UP','Lead with: '+TIPS[Object.keys(NAMES).filter(function(k){return NAMES[k]===last.weakest})[0]]);
+    var weakQs=QS.filter(function(q,k){return ans[k]===0}).map(function(q){return '- '+q.q});
+    if(weakQs.length){L.push('','Answered "weak" on:');weakQs.forEach(function(x){L.push(x);});}
+    d.append('message',L.join('\n'));
+    d.append('_subject','Business Check lead: '+(f.company.value||f.name.value)+' ('+last.score+', weakest: '+last.weakest+')');
     fetch('https://formspree.io/f/xoeqydqp',{method:'POST',body:d,headers:{Accept:'application/json'}}).then(function(r){
       if(r.ok){g('generate_lead',{source:'business-check'});st.textContent='Thanks. I will be in touch within a business day.';f.reset();}
       else st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';

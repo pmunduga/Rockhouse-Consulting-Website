@@ -70,6 +70,12 @@
             <div><label for="bc-biz">Business name</label><input type="text" id="bc-biz" name="company"></div>
             <div><label for="bc-phone">Phone (optional)</label><input type="tel" id="bc-phone" name="phone"></div>
           </div>
+          <div class="form-row">
+            <div><label for="bc-type">What kind of business? (optional)</label><input type="text" id="bc-type" name="business_type" placeholder="e.g. landscaping, restaurant, clinic"></div>
+            <div><label for="bc-size">Team size (optional)</label><input type="text" id="bc-size" name="team_size" placeholder="e.g. just me, 5 people"></div>
+          </div>
+          <label for="bc-pain">What is the one thing you would most like fixed? (optional)</label>
+          <textarea id="bc-pain" name="biggest_frustration"></textarea>
           <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
           <button class="btn btn-primary" type="submit">Send my results to Patrick</button>
           <p id="bc-status" role="status" style="margin-top:1rem;"></p>
