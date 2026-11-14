@@ -1,4 +1,11 @@
 (function(){
+  // EmailJS: same account/service as the assessment. Create a NEW template for this
+  // report (see email-template-business-check.html) and paste its ID below.
+  var EJS_PUBLIC_KEY='asGJezKaFBwII_xMA', EJS_SERVICE='service_2bq1tup', EJS_TEMPLATE='template_ojcsj1n';
+  // Replace with your Microsoft Bookings / Calendly link when you have one.
+  var BOOKING_URL='https://rockhouse-consulting.com/contact.html?utm_source=business-check-email&utm_medium=email';
+  if(window.emailjs)emailjs.init(EJS_PUBLIC_KEY);
+
   var QS=[
    {d:'sales',q:'How do new customers usually find you?',o:['Mostly luck or word of mouth, nothing steady','A few reliable sources, but not tracked','A clear, repeatable way I can measure']},
    {d:'sales',q:'When a customer reaches out, how fast and consistent is your follow-up?',o:['It depends on how busy I am','Usually quick, but it is not written down','Same day, every time, with a simple routine']},
@@ -31,13 +38,28 @@
     var weakest=Object.keys(t).sort(function(a,b){return t[a]-t[b]})[0];
     var total=Object.keys(t).reduce(function(s,k){return s+t[k]},0);
     var level=total<=5?'Lots of easy wins':total<=11?'A solid base with clear gaps':'Strong foundation';
-    last={weakest:NAMES[weakest],score:total+'/16',level:level,t:t,total:total};
+    last={key:weakest,weakest:NAMES[weakest],score:total+'/16',level:level,t:t,total:total};
     $('bc-headline').textContent=level+'. Start with: '+NAMES[weakest]+'.';
     var s='';Object.keys(t).forEach(function(k){var p=t[k]/4*100;
       s+='<div style="margin:.6rem 0"><div style="display:flex;justify-content:space-between"><span>'+NAMES[k]+'</span><span>'+t[k]+'/4</span></div><div style="background:#e3e8ee;height:10px;border-radius:5px"><div style="width:'+p+'%;height:10px;border-radius:5px;background:#0E8394"></div></div></div>';});
     $('bc-scores').innerHTML=s;
     $('bc-tips').innerHTML='<h3>Your first move</h3><p>'+TIPS[weakest]+'</p>';
     show('bc-result');g('bc_complete',{weakest_area:weakest,score:total});window.scrollTo(0,0);
+  }
+  var HEAD={sales:'Customers are where to focus first',ops:'Your day-to-day running is where to focus first',money:'Money and pricing is where to focus first',people:'Team and roles is where to focus first'};
+  function sendReport(f){
+    if(!window.emailjs||!last||EJS_TEMPLATE.indexOf('REPLACE')===0)return;
+    var LAB=['Needs work','Developing','Strong'],lines=[];
+    Object.keys(NAMES).forEach(function(k){lines.push(NAMES[k]+': '+last.t[k]+'/4');});
+    var det=[];QS.forEach(function(q,k){det.push((k+1)+'. '+q.q+'\n    You said: '+q.o[ans[k]]+' ('+LAB[ans[k]]+')');});
+    emailjs.send(EJS_SERVICE,EJS_TEMPLATE,{
+      to_name:f.name.value,to_email:f.email.value,
+      band_headline:last.level+' - '+HEAD[last.key],
+      narrative:'Your overall score was '+last.score+'. '+TIPS[last.key],
+      domain_summary:lines.join('\n'),
+      answer_detail:det.join('\n\n'),
+      booking_url:BOOKING_URL
+    }).catch(function(e){console.error('Report email failed (non-blocking):',e);});
   }
   $('bc-start').onclick=function(){g('bc_start');i=0;ans=[];show('bc-quiz');render();};
   $('bc-back').onclick=function(){if(i>0){i--;render();}};
@@ -55,7 +77,7 @@
     d.append('message',L.join('\n'));
     d.append('_subject','Business Check lead: '+(f.company.value||f.name.value)+' ('+last.score+', weakest: '+last.weakest+')');
     fetch('https://formspree.io/f/xoeqydqp',{method:'POST',body:d,headers:{Accept:'application/json'}}).then(function(r){
-      if(r.ok){g('generate_lead',{source:'business-check'});st.textContent='Thanks. I will be in touch within a business day.';f.reset();}
+      if(r.ok){sendReport(f);g('generate_lead',{source:'business-check'});st.textContent='Thanks. I will be in touch within a business day.';f.reset();}
       else st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';
     }).catch(function(){st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';});
   });
