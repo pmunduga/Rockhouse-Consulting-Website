@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Business Check — Rockhouse Consulting</title>
+<meta name="description" content="A free 3-minute check-up for small business owners. See where your business is strong and where time and money are leaking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="css/style.css">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BGRFW86SY9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BGRFW86SY9');
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.png" alt="Rockhouse Consulting"></a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="assessment.html">Assessment</a></li>
+      <li><a href="insights.html">Insights</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <section style="padding-bottom:0;">
+    <div class="wrap">
+      <div class="eyebrow-line"><span class="num">Free Business Check</span></div>
+      <h1>Where is your business leaking time and money?</h1>
+      <p class="lede max-prose">Eight quick questions, about three minutes. You get a plain-English read on where you're strong and where to focus first. No jargon, no sales call required.</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap max-prose">
+      <div id="bc-intro"><button class="btn btn-primary" id="bc-start" type="button">Start the check</button></div>
+      <div id="bc-quiz" style="display:none;">
+        <p id="bc-progress" style="font-weight:600;color:#0E8394;"></p>
+        <h2 id="bc-q" style="margin-top:.25rem;"></h2>
+        <div id="bc-opts" style="display:grid;gap:.75rem;margin:1.5rem 0;"></div>
+        <button class="btn" id="bc-back" type="button" style="display:none;">Back</button>
+      </div>
+      <div id="bc-result" style="display:none;">
+        <div class="eyebrow-line"><span class="num">Your result</span></div>
+        <h2 id="bc-headline"></h2>
+        <div id="bc-scores" style="margin:1.5rem 0;"></div>
+        <div id="bc-tips"></div>
+        <hr style="margin:2rem 0;opacity:.2;">
+        <h3>Want a free 20-minute walkthrough of your results?</h3>
+        <p>Leave your details and I'll follow up personally. Optional, and there's no obligation.</p>
+        <form id="bc-form">
+          <div class="form-row">
+            <div><label for="bc-name">Name</label><input type="text" id="bc-name" name="name" required></div>
+            <div><label for="bc-email">Email</label><input type="email" id="bc-email" name="email" required></div>
+          </div>
+          <div class="form-row">
+            <div><label for="bc-biz">Business name</label><input type="text" id="bc-biz" name="company"></div>
+            <div><label for="bc-phone">Phone (optional)</label><input type="tel" id="bc-phone" name="phone"></div>
+          </div>
+          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+          <button class="btn btn-primary" type="submit">Send my results to Patrick</button>
+          <p id="bc-status" role="status" style="margin-top:1rem;"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><img src="assets/logo.png" alt="Rockhouse Consulting"></div>
+        <p style="color:#93A3B5;max-width:34ch;">Industrial transformation and AI-enabled decision intelligence, out of Houston, TX.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Site</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="insights.html">Insights</a></li>
+            <li><a href="privacy.html">Privacy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:+1-830-600-7997">+1-830-600-7997</a></li>
+            <li><a href="contact.html">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rockhouse Consulting. All rights reserved.</span>
+      <span>Houston, TX</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/business-check.js"></script>
+</body>
+</html>
