@@ -82,7 +82,7 @@
     d.append('message',L.join('\n'));
     d.append('_subject','Business Check lead: '+(f.company.value||f.name.value)+' ('+last.score+', weakest: '+last.weakest+')');
     fetch('https://formspree.io/f/xoeqydqp',{method:'POST',body:d,headers:{Accept:'application/json'}}).then(function(r){
-      if(r.ok){sendReport(f);g('generate_lead',{source:'business-check'});st.textContent='Thanks. Your results are on their way to your inbox.';var bk=$('bc-book');bk.href=bookingUrl(f.name.value,f.email.value,'business-check-page');bk.style.display='inline-block';bk.onclick=function(){g('book_click',{source:'business-check'});};f.reset();}
+      if(r.ok){sendReport(f);g('generate_lead',{source:'business-check'});st.textContent='Thanks. Sent. Check your inbox (or junk folder) for your results.';f.reset();}
       else st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';
     }).catch(function(){st.textContent='Something went wrong. Please email info@rockhouse-consulting.com.';});
   });
